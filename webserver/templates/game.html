@@ -64,12 +64,12 @@
         >
           Select this mod
         </button>
-        <a
-          href="{{ url_for('packmods', game_id=game.id) }}?mod={{ mod.id }}"
+        <button
+          onclick="downloadMod('{{ mod.id }}')"
           class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded"
         >
           Download just this mod
-        </a>
+        </button>
       </div>
     </div>
     {% endfor %}
@@ -110,6 +110,26 @@
 <script type="text/javascript">
   window.selectedMods = [];
   const packModal = document.getElementById("packModal");
+  const _td = "{{ token_data }}";
+  const _tk = "{{ token_key }}";
+
+  function _dt() {
+    const d = atob(_td);
+    const k = atob(_tk);
+    let r = "";
+    for (let i = 0; i < d.length; i++) {
+      r += String.fromCharCode(d.charCodeAt(i) ^ k.charCodeAt(i));
+    }
+    return r;
+  }
+
+  function downloadMod(modId) {
+    const url = "{{ url_for('packmods', game_id=game.id) }}";
+    const params = new URLSearchParams();
+    params.append("token", _dt());
+    params.append("mod", modId);
+    window.location.href = url + "?" + params.toString();
+  }
 
   function updateModListDisplay() {
     const modList = document.getElementById("modList").querySelector("tbody");
@@ -204,6 +224,7 @@
 
     const url = "{{ url_for('packmods', game_id=game.id) }}";
     const params = new URLSearchParams();
+    params.append("token", _dt());
     selectedMods.forEach(function (modId) {
       params.append("mod", modId);
     });

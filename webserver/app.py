@@ -1,4 +1,8 @@
+import base64
 import hashlib
+import hmac
+import os
+import time
 
 from pathlib import Path
 from tempfile import gettempdir
@@ -13,6 +17,41 @@ CACHE_DIR = Path(gettempdir()) / "idlemod_cache"
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
 cache = FileCache(CACHE_DIR, max_entries=10, max_age_seconds=3600)
+
+BOT_TOKEN_SECRET = os.urandom(32).hex()
+BOT_TOKEN_MAX_AGE = 300  # 5 min
+
+
+def _generate_token() -> str:
+    timestamp = int(time.time())
+    message = str(timestamp).encode()
+    signature = hmac.new(BOT_TOKEN_SECRET.encode(), message, hashlib.sha256).hexdigest()
+    return f"{timestamp}.{signature}"
+
+
+def _obfuscate_token(token: str) -> tuple[str, str]:
+    key = os.urandom(len(token))
+    xored = bytes(a ^ b for a, b in zip(token.encode(), key))
+    return base64.b64encode(xored).decode(), base64.b64encode(key).decode()
+
+
+def _validate_token(token: str) -> bool:
+    if not token or "." not in token:
+        return False
+
+    try:
+        timestamp_str, signature = token.split(".", 1)
+        timestamp = int(timestamp_str)
+    except ValueError:
+        return False
+
+    if time.time() - timestamp > BOT_TOKEN_MAX_AGE:
+        return False
+
+    expected = hmac.new(
+        BOT_TOKEN_SECRET.encode(), timestamp_str.encode(), hashlib.sha256
+    ).hexdigest()
+    return hmac.compare_digest(signature, expected)
 
 
 def _get_game(game_id: str):
@@ -34,11 +73,18 @@ async def index():
 
 @WEBSERVER.get("/game/<string:game_id>")
 async def game(game_id: str):
-    return await render_template("game.html", game=_get_game(game_id))
+    token_data, token_key = _obfuscate_token(_generate_token())
+    return await render_template(
+        "game.html", game=_get_game(game_id), token_data=token_data, token_key=token_key
+    )
 
 
 @WEBSERVER.get("/game/<string:game_id>/packmod")
 async def packmods(game_id: str):
+    token = request.args.get("token", "")
+    if not _validate_token(token):
+        abort(403, "Invalid or expired token. Please go back and try again.")
+
     mods = request.args.getlist("mod")
     game = _get_game(game_id)
     mods_to_pack = [mod for mod in game.get_mods() if mod.id in mods]
