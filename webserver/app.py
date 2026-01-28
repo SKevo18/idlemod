@@ -5,7 +5,6 @@ import os
 import time
 
 from pathlib import Path
-from tempfile import gettempdir
 
 from quart import Quart, abort, redirect, render_template, request
 from cache import FileCache
@@ -13,7 +12,7 @@ from modder import GAMES, pack
 
 
 WEBSERVER = Quart(__name__)
-CACHE_DIR = Path(gettempdir()) / "idlemod_cache"
+CACHE_DIR = Path(__file__).parent / "cache"
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
 cache = FileCache(CACHE_DIR, max_entries=10, max_age_seconds=3600)
@@ -83,7 +82,7 @@ async def game(game_id: str):
 async def packmods(game_id: str):
     token = request.args.get("token", "")
     if not _validate_token(token):
-        abort(403, "Invalid or expired token. Please go back and try again.")
+        abort(403, "Invalid or expired token. Please go back and reload the page.")
 
     mods = request.args.getlist("mod")
     game = _get_game(game_id)

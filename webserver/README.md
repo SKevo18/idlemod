@@ -21,13 +21,15 @@ You can access it live at [https://idlemod.svit.ac](https://idlemod.svit.ac).
 ```caddyfile
 idlemod.example.com {
     tls /etc/ssl/private/your-cert.pem /etc/ssl/private/your-cert.key
-    handle /cache/* {
-        root * /tmp/idlemod_cache
-        uri strip_prefix /cache
+
+    handle_path /cache/* {
+        root * /srv/idlemod/webserver/cache
         file_server
     }
 
-    reverse_proxy unix//srv/idlemod/webserver/server.sock
+    handle {
+        reverse_proxy unix//srv/idlemod/webserver/server.sock
+    }
 }
 ```
 
@@ -42,7 +44,7 @@ server {
     ssl_certificate_key /etc/ssl/private/your-cert.key;
 
     location /cache/ {
-        alias /tmp/idlemod_cache/;
+        alias /srv/idlemod/webserver/cache/;
         add_header Content-Disposition "attachment";
     }
 
@@ -66,8 +68,8 @@ Requires `mod_proxy`, `mod_proxy_unix`, and `mod_headers`.
     SSLCertificateFile /etc/ssl/private/your-cert.pem
     SSLCertificateKeyFile /etc/ssl/private/your-cert.key
 
-    Alias /cache/ /tmp/idlemod_cache/
-    <Directory /tmp/idlemod_cache/>
+    Alias /cache/ /srv/idlemod/webserver/cache/
+    <Directory /srv/idlemod/webserver/cache/>
         Require all granted
         Header set Content-Disposition "attachment"
     </Directory>
@@ -77,3 +79,5 @@ Requires `mod_proxy`, `mod_proxy_unix`, and `mod_headers`.
     ProxyPassReverse / unix:/srv/idlemod/webserver/server.sock
 </VirtualHost>
 ```
+
+**Note**: both the webserver and the idlemod hypercorn server must be run as the same user, or must have the same permissions to access the cache directory.
