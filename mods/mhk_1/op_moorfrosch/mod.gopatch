@@ -1,0 +1,23 @@
+@ + Track.ini 694 0 true
+[Kart:Moorfrosch]
+MotionPrefix=AFK_
+ObjectFile=AFK.chr
+
+Acceleration=5.0
+SlideSpeedDown=1.0
+MaximumSpeed=1000
+TurnGain=3.4
+TurnSpeedDown=0.15
+MaximumTurn=180.0
+RollOutFactor=1.5
+
+Mass=5.0
+
+[Kart:Moorfrosch:Player]
+Class=KartPlayer
+
+[Kart:Moorfrosch:Opponent]
+Class=KartOpponent
+
+[Kart:Moorfrosch:Phantom]
+Class=KartPhantom
