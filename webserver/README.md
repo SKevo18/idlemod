@@ -27,7 +27,7 @@ idlemod.example.com {
         file_server
     }
 
-    reverse_proxy unix//srv/idlemod/webserver/webserver.sock
+    reverse_proxy unix//srv/idlemod/webserver/server.sock
 }
 ```
 
@@ -47,7 +47,7 @@ server {
     }
 
     location / {
-        proxy_pass http://unix:/srv/idlemod/webserver/webserver.sock;
+        proxy_pass http://unix:/srv/idlemod/webserver/server.sock;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
     }
@@ -73,7 +73,7 @@ Requires `mod_proxy`, `mod_proxy_unix`, and `mod_headers`.
     </Directory>
 
     ProxyPass /cache/ !
-    ProxyPass / unix:/srv/idlemod/webserver/webserver.sock
-    ProxyPassReverse / unix:/srv/idlemod/webserver/webserver.sock
+    ProxyPass / unix:/srv/idlemod/webserver/server.sock
+    ProxyPassReverse / unix:/srv/idlemod/webserver/server.sock
 </VirtualHost>
 ```
