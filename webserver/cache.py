@@ -1,3 +1,4 @@
+import shutil
 import time
 
 from dataclasses import dataclass, field
@@ -18,18 +19,20 @@ class FileCache:
         self.max_entries = max_entries
         self.max_age_seconds = max_age_seconds
         self._entries: dict[str, CacheEntry] = {}
-        self._cleanup_stale_files()
+        self._cleanup_stale()
 
-    def _cleanup_stale_files(self):
+    def _cleanup_stale(self):
         if not self.cache_dir.exists():
             return
 
-        for file in self.cache_dir.iterdir():
-            if file.is_file():
-                try:
-                    file.unlink()
-                except OSError:
-                    pass
+        for item in self.cache_dir.iterdir():
+            try:
+                if item.is_dir():
+                    shutil.rmtree(item)
+                else:
+                    item.unlink()
+            except OSError:
+                pass
 
     def _evict_expired(self):
         now = time.time()
@@ -52,7 +55,10 @@ class FileCache:
         entry = self._entries.pop(key, None)
         if entry and entry.path.exists():
             try:
-                entry.path.unlink()
+                if entry.path.is_dir():
+                    shutil.rmtree(entry.path)
+                else:
+                    entry.path.unlink()
             except OSError:
                 pass
 

@@ -3,7 +3,7 @@ import hashlib
 from pathlib import Path
 from tempfile import gettempdir
 
-from quart import Quart, abort, render_template, request, send_file
+from quart import Quart, abort, redirect, render_template, request
 from cache import FileCache
 from modder import GAMES, pack
 
@@ -47,17 +47,13 @@ async def packmods(game_id: str):
         abort(400, "No valid mods selected to pack.")
 
     key = _cache_key(game_id, mods)
-    cached_path = cache.get(key)
+    cache_subdir = CACHE_DIR / key
+    output_path = cache_subdir / game.out_filename
 
-    if cached_path:
-        return await send_file(
-            cached_path,
-            as_attachment=True,
-            mimetype="application/octet-stream",
-            attachment_filename=game.out_filename,
-        )
+    if cache.get(key):
+        return redirect(f"/cache/{key}/{game.out_filename}")
 
-    output_path = CACHE_DIR / f"{key}{game.original_datafile.suffix}"
+    cache_subdir.mkdir(exist_ok=True)
     result = await pack(game, output_path, mods_to_pack)
 
     if result.returncode != 0:
@@ -67,11 +63,6 @@ async def packmods(game_id: str):
     if not output_path.exists():
         abort(500, "Pack command succeeded but output file was not created")
 
-    cache.put(key, output_path)
+    cache.put(key, cache_subdir)
 
-    return await send_file(
-        output_path,
-        as_attachment=True,
-        mimetype="application/octet-stream",
-        attachment_filename=game.out_filename,
-    )
+    return redirect(f"/cache/{key}/{game.out_filename}")
