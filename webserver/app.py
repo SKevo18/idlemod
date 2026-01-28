@@ -44,7 +44,7 @@ async def packmods(game_id: str):
     mods_to_pack = [mod for mod in game.get_mods() if mod.id in mods]
 
     if not mods_to_pack:
-        return await abort(400, "No valid mods selected to pack.")
+        abort(400, "No valid mods selected to pack.")
 
     key = _cache_key(game_id, mods)
     cached_path = cache.get(key)
@@ -62,7 +62,10 @@ async def packmods(game_id: str):
 
     if result.returncode != 0:
         err_msg = result.stderr.decode("utf-8") if result.stderr else "Unknown error"
-        return await abort(500, f"Failed to pack mods: {err_msg}")
+        abort(500, f"Failed to pack mods: {err_msg}")
+
+    if not output_path.exists():
+        abort(500, "Pack command succeeded but output file was not created")
 
     cache.put(key, output_path)
 
