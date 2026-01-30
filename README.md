@@ -15,6 +15,7 @@ An all-in-one Go command-line tool for patching & modding old game data files.
 - [x] Moorhuhn Kart 2 (game ID: `mhk_2`);
   - [ ] Schatzjäger (untested) (game ID: `schatzjaeger`) - note: this uses the exact same algorithm as MHK2;
 - [x] Moorhuhn Kart 3 (game ID: `mhk_3`);
+  - [x] TINcan Race (game ID: `tincan`, same format as `mhk_3`)
 - [x] Moorhuhn Kart 4 (Thunder) (game ID: `mhk_4`/`mhk_thunder`);
 - [x] Dino and Aliens (game ID: `dino_aliens`);
 

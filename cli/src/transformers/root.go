@@ -95,14 +95,14 @@ func Transform(gameId string, action string, args []string) error {
 		transformFunction = transformMhk1
 	case "mhk_2", "schatzjaeger": // should also work on Schatzjäger (Jump and Run), but untested
 		transformFunction = transformMhk2
-	case "mhk_3":
+	case "mhk_3", "tincan":
 		transformFunction = transformMhk3
 	case "mhk_4", "mhk_thunder":
 		transformFunction = transformMhk4
 	case "dino_aliens":
 		transformFunction = transformDinoAliens
 	default:
-		return errors.New("invalid game ID! Please, use one of the following: `mhk_extra`, `mhk_1`, `mhk_2`, `schatzjaeger`, `mhk_3`, `mhk_4`, `mhk_thunder`, `dino_aliens`")
+		return errors.New("invalid game ID! Please, use one of the following: `mhk_extra`, `mhk_1`, `mhk_2`, `schatzjaeger`, `mhk_3`, `tincan`, `mhk_4`, `mhk_thunder`, `dino_aliens`")
 	}
 
 	err := transformFunction(action, args)

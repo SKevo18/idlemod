@@ -11,6 +11,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"golang.org/x/text/encoding/charmap"
 )
 
 // Packs MHK 3 data files.
@@ -38,9 +40,16 @@ func packMhk3(dataFileLocation string, inputFolder string) error {
 		// write filename
 		filename := strings.ReplaceAll(fileEntry.FilePath, "/", "\\")
 		filename = strings.Replace(filename, "\\", ":\\", 1)
-		filenameLength := uint8(len(filename))
+
+		// encode filename from UTF-8 to Windows-1252
+		encodedFilename, err := charmap.Windows1252.NewEncoder().Bytes([]byte(filename))
+		if err != nil {
+			return err
+		}
+
+		filenameLength := uint8(len(encodedFilename))
 		binary.Write(dataFile, binary.LittleEndian, filenameLength)
-		dataFile.Write([]byte(filename))
+		dataFile.Write(encodedFilename)
 		dataFile.Write([]byte{0x0})
 
 		// get file size
@@ -105,8 +114,14 @@ func unpackMhk3(dataFileLocation string, outputDirectory string) error {
 		// skip 4 bytes, file length is written twice
 		dataFile.Seek(0x4, io.SeekCurrent)
 
+		// decode filename from Windows-1252 to UTF-8
+		decodedFilename, err := charmap.Windows1252.NewDecoder().Bytes(filenameBytes)
+		if err != nil {
+			return err
+		}
+
 		fileEntries[i] = FileEntry{
-			FilePath:      string(filenameBytes),
+			FilePath:      string(decodedFilename),
 			ContentOffset: int64(fileOffset),
 			FileSize:      int64(fileLength),
 		}
