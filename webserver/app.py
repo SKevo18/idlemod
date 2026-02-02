@@ -17,7 +17,7 @@ CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
 cache = FileCache(CACHE_DIR, max_entries=10, max_age_seconds=3600)
 
-BOT_TOKEN_SECRET = os.urandom(32).hex()
+BOT_TOKEN_SECRET = os.environ.get("BOT_TOKEN_SECRET") or os.urandom(32).hex()
 BOT_TOKEN_MAX_AGE = 300  # 5 min
 
 

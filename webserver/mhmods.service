@@ -14,6 +14,8 @@ After=network.target
 [Service]
 Type=simple
 
+# FIXME: set BOT_TOKEN_SECRET
+Environment=BOT_TOKEN_SECRET=...
 # FIXME: Update with your path to `start.sh`:
 ExecStart=./start.sh
 
