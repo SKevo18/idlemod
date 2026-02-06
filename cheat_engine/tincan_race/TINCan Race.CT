@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="46">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>1</ID>
+      <Description>"Infinite Powerups"</Description>
+      <Color>FFFF00</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : TINCan Race.exe
+  Version: 
+  Date   : 2026-02-06
+  Author : idlemod
+
+  infinite powerups
+}
+
+define(address,02B20001)
+define(bytes,C7 85 70 03 00 00 00 00 00 00)
+
+[ENABLE]
+//code from here to '[DISABLE]' will be used to enable the cheat
+
+ 
+ 
+assert(address,bytes)
+alloc(newmem,$1000)
+
+label(code)
+label(return)
+
+newmem:
+
+code:
+  nop //mov [ebp+00000370],00000000
+  jmp return
+
+address:
+  jmp newmem
+  nop 5
+return:
+
+[DISABLE]
+//code from here till the end of the code will be used to disable the cheat
+address:
+  db bytes
+  // mov [ebp+00000370],00000000
+
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: 02B20001
+
+02B1FFF7:                                - ?? 
+02B1FFF8:                                - ?? 
+02B1FFF9:                                - ?? 
+02B1FFFA:                                - ?? 
+02B1FFFB:                                - ?? 
+02B1FFFC:                                - ?? 
+02B1FFFD:                                - ?? 
+02B1FFFE:                                - ?? 
+02B1FFFF:                                - ?? 
+02B20000: 90                             - nop 
+// ---------- INJECTING HERE ----------
+02B20001: C7 85 70 03 00 00 00 00 00 00  - mov [ebp+00000370],00000000
+// ---------- DONE INJECTING  ----------
+02B2000B: E9 00 74 93 FD                 - jmp "TINCan Race.exe"+57410
+02B20010: 00 00                          - add [eax],al
+02B20012: 00 00                          - add [eax],al
+02B20014: 00 00                          - add [eax],al
+02B20016: 00 00                          - add [eax],al
+02B20018: 00 00                          - add [eax],al
+02B2001A: 00 00                          - add [eax],al
+02B2001C: 00 00                          - add [eax],al
+02B2001E: 00 00                          - add [eax],al
+02B20020: 00 00                          - add [eax],al
+}
+</AssemblerScript>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Toggle Activation</Action>
+          <Keys>
+            <Key>80</Key>
+          </Keys>
+          <Description>infinite powerups</Description>
+          <ID>0</ID>
+        </Hotkey>
+      </Hotkeys>
+    </CheatEntry>
+  </CheatEntries>
+  <CheatCodes>
+    <CodeEntry>
+      <Description>Change of mov [ebp+00000370],00000000</Description>
+      <AddressString>02B20001</AddressString>
+      <Before>
+        <Byte>90</Byte>
+      </Before>
+      <Actual>
+        <Byte>C7</Byte>
+        <Byte>85</Byte>
+        <Byte>70</Byte>
+        <Byte>03</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>E9</Byte>
+        <Byte>00</Byte>
+        <Byte>74</Byte>
+        <Byte>93</Byte>
+        <Byte>FD</Byte>
+      </After>
+    </CodeEntry>
+  </CheatCodes>
+  <UserdefinedSymbols>
+    <SymbolEntry>
+      <Name>speedhack_wantedspeed</Name>
+      <Address>92B0000</Address>
+    </SymbolEntry>
+  </UserdefinedSymbols>
+</CheatTable>

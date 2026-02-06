@@ -1,0 +1,10 @@
+Empty - 0
+
+Shield - 1
+Magent - 2
+Radio Disruptor - 3
+Zapper - 4
+Turbo Drink - 5
+Demolition Speed Thingy - 6
+Homing Missile - 7
+Normal Missile - 8
