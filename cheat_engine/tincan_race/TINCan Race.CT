@@ -2,19 +2,18 @@
 <CheatTable CheatEngineTableVersion="46">
   <CheatEntries>
     <CheatEntry>
-      <ID>1</ID>
+      <ID>0</ID>
       <Description>"Infinite Powerups"</Description>
-      <Color>FFFF00</Color>
       <VariableType>Auto Assembler Script</VariableType>
       <AssemblerScript>{ Game   : TINCan Race.exe
   Version: 
   Date   : 2026-02-06
   Author : idlemod
 
-  infinite powerups
+  Powerups are not being consumed when used.
 }
 
-define(address,02B20001)
+define(address,"TINCan Race.exe"+57406)
 define(bytes,C7 85 70 03 00 00 00 00 00 00)
 
 [ENABLE]
@@ -48,43 +47,107 @@ address:
 dealloc(newmem)
 
 {
-// ORIGINAL CODE - INJECTION POINT: 02B20001
+// ORIGINAL CODE - INJECTION POINT: TINCan Race.exe+57406
 
-02B1FFF7:                                - ?? 
-02B1FFF8:                                - ?? 
-02B1FFF9:                                - ?? 
-02B1FFFA:                                - ?? 
-02B1FFFB:                                - ?? 
-02B1FFFC:                                - ?? 
-02B1FFFD:                                - ?? 
-02B1FFFE:                                - ?? 
-02B1FFFF:                                - ?? 
-02B20000: 90                             - nop 
+TINCan Race.exe+573DA: D1 E0                          - shl eax,1
+TINCan Race.exe+573DC: F3 0F 11 44 24 14              - movss [esp+14],xmm0
+TINCan Race.exe+573E2: F3 0F 2A C0                    - cvtsi2ss xmm0,eax
+TINCan Race.exe+573E6: 8D 44 24 10                    - lea eax,[esp+10]
+TINCan Race.exe+573EA: F3 0F 11 44 24 18              - movss [esp+18],xmm0
+TINCan Race.exe+573F0: E8 FB 21 01 00                 - call "TINCan Race.exe"+695F0
+TINCan Race.exe+573F5: 8B 85 70 03 00 00              - mov eax,[ebp+00000370]
+TINCan Race.exe+573FB: 85 C0                          - test eax,eax
+TINCan Race.exe+573FD: 74 1A                          - je "TINCan Race.exe"+57419
+TINCan Race.exe+573FF: F6 85 7C 03 00 00 02           - test byte ptr [ebp+0000037C],02
 // ---------- INJECTING HERE ----------
-02B20001: C7 85 70 03 00 00 00 00 00 00  - mov [ebp+00000370],00000000
+TINCan Race.exe+57406: C7 85 70 03 00 00 00 00 00 00  - mov [ebp+00000370],00000000
 // ---------- DONE INJECTING  ----------
-02B2000B: E9 00 74 93 FD                 - jmp "TINCan Race.exe"+57410
-02B20010: 00 00                          - add [eax],al
-02B20012: 00 00                          - add [eax],al
-02B20014: 00 00                          - add [eax],al
-02B20016: 00 00                          - add [eax],al
-02B20018: 00 00                          - add [eax],al
-02B2001A: 00 00                          - add [eax],al
-02B2001C: 00 00                          - add [eax],al
-02B2001E: 00 00                          - add [eax],al
-02B20020: 00 00                          - add [eax],al
+TINCan Race.exe+57410: 74 07                          - je "TINCan Race.exe"+57419
+TINCan Race.exe+57412: C6 85 74 03 00 00 01           - mov byte ptr [ebp+00000374],01
+TINCan Race.exe+57419: 5F                             - pop edi
+TINCan Race.exe+5741A: 5E                             - pop esi
+TINCan Race.exe+5741B: 5D                             - pop ebp
+TINCan Race.exe+5741C: 81 C4 A0 00 00 00              - add esp,000000A0
+TINCan Race.exe+57422: C2 08 00                       - ret 0008
+TINCan Race.exe+57425: 8D 49 00                       - lea ecx,[ecx+00]
+TINCan Race.exe+57428: 37                             - aaa 
+TINCan Race.exe+57429: 69 45 00 70 6A 45 00           - imul eax,[ebp+00],"TINCan Race.exe"+56A70
 }
 </AssemblerScript>
-      <Hotkeys>
-        <Hotkey>
-          <Action>Toggle Activation</Action>
-          <Keys>
-            <Key>80</Key>
-          </Keys>
-          <Description>infinite powerups</Description>
-          <ID>0</ID>
-        </Hotkey>
-      </Hotkeys>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>1</ID>
+      <Description>"No Powerups"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : TINCan Race.exe
+  Version: 
+  Date   : 2026-02-06
+  Author : idlemod
+
+  Collecting powerup boxes does not give you a powerup.
+}
+
+define(address,"TINCan Race.exe"+50527)
+define(bytes,89 96 70 03 00 00)
+
+[ENABLE]
+//code from here to '[DISABLE]' will be used to enable the cheat
+
+ 
+ 
+assert(address,bytes)
+alloc(newmem,$1000)
+
+label(code)
+label(return)
+
+newmem:
+
+code:
+  nop //mov [esi+00000370],edx
+  jmp return
+
+address:
+  jmp newmem
+  nop
+return:
+
+[DISABLE]
+//code from here till the end of the code will be used to disable the cheat
+address:
+  db bytes
+  // mov [esi+00000370],edx
+
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: TINCan Race.exe+50527
+
+TINCan Race.exe+50503: E8 4A 7D 0A 00        - call "TINCan Race.exe"+F8252
+TINCan Race.exe+50508: 99                    - cdq 
+TINCan Race.exe+50509: B9 09 00 00 00        - mov ecx,00000009
+TINCan Race.exe+5050E: F7 F9                 - idiv ecx
+TINCan Race.exe+50510: 8B 86 70 03 00 00     - mov eax,[esi+00000370]
+TINCan Race.exe+50516: BB 01 00 00 00        - mov ebx,00000001
+TINCan Race.exe+5051B: 42                    - inc edx
+TINCan Race.exe+5051C: 3B C2                 - cmp eax,edx
+TINCan Race.exe+5051E: 74 15                 - je "TINCan Race.exe"+50535
+TINCan Race.exe+50520: F6 86 7C 03 00 00 02  - test byte ptr [esi+0000037C],02
+// ---------- INJECTING HERE ----------
+TINCan Race.exe+50527: 89 96 70 03 00 00     - mov [esi+00000370],edx
+// ---------- DONE INJECTING  ----------
+TINCan Race.exe+5052D: 74 06                 - je "TINCan Race.exe"+50535
+TINCan Race.exe+5052F: 88 9E 74 03 00 00     - mov [esi+00000374],bl
+TINCan Race.exe+50535: 0F 57 C0              - xorps xmm0,xmm0
+TINCan Race.exe+50538: 8B 16                 - mov edx,[esi]
+TINCan Race.exe+5053A: 8B CE                 - mov ecx,esi
+TINCan Race.exe+5053C: F3 0F 11 44 24 10     - movss [esp+10],xmm0
+TINCan Race.exe+50542: F3 0F 11 44 24 14     - movss [esp+14],xmm0
+TINCan Race.exe+50548: F3 0F 11 44 24 18     - movss [esp+18],xmm0
+TINCan Race.exe+5054E: FF 52 14              - call dword ptr [edx+14]
+TINCan Race.exe+50551: 8D 4C 24 1C           - lea ecx,[esp+1C]
+}
+</AssemblerScript>
     </CheatEntry>
   </CheatEntries>
   <CheatCodes>
